@@ -54,18 +54,29 @@ enum BuildingType: String, Codable, CaseIterable {
     /// Minimum player level required to unlock
     var requiredLevel: Int {
         switch self {
-        case .residential:  return 1
-        case .park:         return 1
-        case .shop:         return 2
-        case .school:       return 2
-        case .hospital:     return 2
+        case .residential, .unknown, .water, .park: return 1
         case .apartments:   return 2
-        case .office:       return 3
-        case .supermarket:  return 3
-        case .industrial:   return 4
-        case .powerPlant:   return 4
-        case .water:        return 1
-        case .unknown:      return 1
+        case .shop:         return 3
+        case .school:       return 4
+        case .hospital:     return 5
+        case .office:       return 6
+        case .supermarket:  return 7
+        case .industrial:   return 8
+        case .powerPlant:   return 10
+        }
+    }
+
+    /// Rarity multiplier for XP calculation
+    var rarityMultiplier: Double {
+        switch self {
+        case .residential, .unknown, .water, .park: return 1.0
+        case .apartments:                            return 1.5
+        case .shop:                                  return 1.5
+        case .school, .hospital:                     return 2.0
+        case .office:                                return 2.0
+        case .supermarket:                           return 2.5
+        case .industrial:                            return 3.0
+        case .powerPlant:                            return 5.0
         }
     }
 
@@ -108,18 +119,18 @@ enum BuildingType: String, Codable, CaseIterable {
     /// Cost in points to unlock
     var unlockCost: Int {
         switch self {
-        case .residential:  return 0
-        case .park:         return 0
-        case .shop:         return 20
-        case .school:       return 30
-        case .hospital:     return 40
-        case .apartments:   return 35
-        case .office:       return 50
-        case .supermarket:  return 60
-        case .industrial:   return 120
-        case .powerPlant:   return 200
-        case .water:        return 0
-        case .unknown:      return 10
+        case .residential:  return 150
+        case .unknown:      return 150
+        case .park:         return 100
+        case .water:        return 80
+        case .apartments:   return 300
+        case .shop:         return 350
+        case .school:       return 400
+        case .hospital:     return 500
+        case .office:       return 600
+        case .supermarket:  return 800
+        case .industrial:   return 1500
+        case .powerPlant:   return 3000
         }
     }
 
@@ -169,11 +180,9 @@ struct Building: Identifiable, Codable {
         name ?? type.displayName
     }
 
-    /// Points earned = base × area factor × levels
+    /// XP = unlockCost ÷ 10 × rarityMultiplier
     var earnedPoints: Int {
-        let areaFactor = max(1.0, areaM2 / 100.0)
-        let levelFactor = Double(max(1, levels))
-        return Int(Double(type.basePoints) * min(areaFactor, 10.0) * min(levelFactor, 5.0))
+        Int(Double(type.unlockCost) / 10.0 * type.rarityMultiplier)
     }
 
     var unlockCost: Int { type.unlockCost }
@@ -253,11 +262,30 @@ struct LevelConfig {
     let title: String
 
     static let all: [LevelConfig] = [
-        LevelConfig(level: 1, pointsRequired: 0,    title: "Основатель"),
-        LevelConfig(level: 2, pointsRequired: 50,   title: "Строитель"),
-        LevelConfig(level: 3, pointsRequired: 150,  title: "Архитектор"),
-        LevelConfig(level: 4, pointsRequired: 400,  title: "Градостроитель"),
-        LevelConfig(level: 5, pointsRequired: 1000, title: "Мэр города"),
+        LevelConfig(level: 1,  pointsRequired: 0,       title: "Новичок"),
+        LevelConfig(level: 2,  pointsRequired: 100,     title: "Житель"),
+        LevelConfig(level: 3,  pointsRequired: 250,     title: "Застройщик"),
+        LevelConfig(level: 4,  pointsRequired: 500,     title: "Архитектор"),
+        LevelConfig(level: 5,  pointsRequired: 900,     title: "Градостроитель"),
+        LevelConfig(level: 6,  pointsRequired: 1_500,   title: "Мэр"),
+        LevelConfig(level: 7,  pointsRequired: 2_500,   title: "Префект"),
+        LevelConfig(level: 8,  pointsRequired: 5_000,   title: "Губернатор"),
+        LevelConfig(level: 9,  pointsRequired: 7_000,   title: "Магнат"),
+        LevelConfig(level: 10, pointsRequired: 9_000,   title: "Олигарх"),
+        LevelConfig(level: 11, pointsRequired: 12_000,  title: "Патрон"),
+        LevelConfig(level: 12, pointsRequired: 16_000,  title: "Меценат"),
+        LevelConfig(level: 13, pointsRequired: 20_000,  title: "Визионер"),
+        LevelConfig(level: 14, pointsRequired: 22_000,  title: "Реформатор"),
+        LevelConfig(level: 15, pointsRequired: 25_000,  title: "Легенда"),
+        LevelConfig(level: 16, pointsRequired: 32_000,  title: "Иконa"),
+        LevelConfig(level: 17, pointsRequired: 40_000,  title: "Титан"),
+        LevelConfig(level: 18, pointsRequired: 50_000,  title: "Властелин"),
+        LevelConfig(level: 19, pointsRequired: 55_000,  title: "Emperor"),
+        LevelConfig(level: 20, pointsRequired: 60_000,  title: "Основатель"),
+        LevelConfig(level: 25, pointsRequired: 120_000, title: "Строитель эпохи"),
+        LevelConfig(level: 30, pointsRequired: 200_000, title: "Властитель городов"),
+        LevelConfig(level: 40, pointsRequired: 500_000, title: "Демиург"),
+        LevelConfig(level: 50, pointsRequired: 1_000_000, title: "Бог города"),
     ]
 
     static func current(for points: Int) -> LevelConfig {

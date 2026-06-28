@@ -15,6 +15,9 @@ struct CityUnlockApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(gameState)
+                .onAppear {
+                    gameState.restoreSession()
+                }
         }
     }
 }

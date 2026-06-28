@@ -19,7 +19,7 @@ class BuildingAnnotation: NSObject, MKAnnotation {
 struct CityMapView: UIViewRepresentable {
     let city: City
     let buildings: [Building]
-    let totalPoints: Int
+    let coins: Int
     let playerLevel: Int
     let onTap: (Building) -> Void
     let onRegionChange: (MKCoordinateRegion) -> Void
@@ -47,7 +47,7 @@ struct CityMapView: UIViewRepresentable {
     func updateUIView(_ map: MKMapView, context: Context) {
         context.coordinator.onTap = onTap
         context.coordinator.onRegionChange = onRegionChange
-        context.coordinator.totalPoints = totalPoints
+        context.coordinator.totalPoints = coins
         context.coordinator.playerLevel = playerLevel
         context.coordinator.update(map, buildings: buildings)
     }

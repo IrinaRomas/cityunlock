@@ -140,7 +140,8 @@ struct CityPickerView: View {
 
                 await MainActor.run {
                     gameState.buildings = initial
-                    gameState.totalPoints = 20
+                    gameState.coins = 500
+                    gameState.totalPoints = 0
                     gameState.isLoading = false
                 }
             } catch {

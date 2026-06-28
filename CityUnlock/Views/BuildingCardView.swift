@@ -52,12 +52,32 @@ struct BuildingCardView: View {
 
             // Stats row
             HStack(spacing: 0) {
-                statCell(value: "+\(building.earnedPoints)", label: "очков", color: .green)
+                statCell(value: "+\(building.earnedPoints) XP", label: "опыт", color: .green)
                 Divider().frame(height: 36)
-                statCell(value: "\(building.unlockCost)", label: "стоимость", color: .orange)
+                statCell(value: "\(building.unlockCost) 💰", label: "стоимость", color: .orange)
                 Divider().frame(height: 36)
                 statCell(value: "Ур. \(building.requiredLevel)", label: "требуется", color: .blue)
             }
+            .padding(.horizontal, 20)
+
+            // Passive income row
+            HStack(spacing: 6) {
+                Image(systemName: "clock.arrow.circlepath")
+                    .font(.system(size: 13))
+                    .foregroundColor(.green)
+                Text("Доход: +\(building.type.incomePerHour) 💰/ч")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.green)
+                if building.state == .unlocked {
+                    Text("· уже приносит")
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+                }
+            }
+            .padding(.vertical, 8)
+            .padding(.horizontal, 16)
+            .background(Color.green.opacity(0.08))
+            .cornerRadius(10)
             .padding(.horizontal, 20)
 
             // Action button
@@ -147,13 +167,13 @@ struct BuildingCardView: View {
                 .background(Color(.systemGray5))
                 .cornerRadius(14)
 
-            } else if gameState.totalPoints < building.unlockCost {
-                // Not enough points
+            } else if gameState.coins < building.unlockCost {
+                // Not enough coins
                 VStack(spacing: 4) {
-                    Text("Нужно \(building.unlockCost - gameState.totalPoints) очков")
+                    Text("Не хватает \(building.unlockCost - gameState.coins) 💰")
                         .font(.system(size: 15, weight: .medium))
                         .foregroundColor(.secondary)
-                    Text("У вас: \(gameState.totalPoints) / \(building.unlockCost)")
+                    Text("У вас: \(gameState.coins) / \(building.unlockCost)")
                         .font(.system(size: 12))
                         .foregroundColor(.secondary)
                 }
@@ -171,7 +191,7 @@ struct BuildingCardView: View {
                 } label: {
                     HStack {
                         Image(systemName: "lock.open.fill")
-                        Text("Разблокировать · \(building.unlockCost) оч.")
+                        Text("Разблокировать · \(building.unlockCost) 💰")
                             .font(.system(size: 15, weight: .semibold))
                     }
                     .frame(maxWidth: .infinity)

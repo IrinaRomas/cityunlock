@@ -10,7 +10,7 @@ struct GameView: View {
                 CityMapView(
                     city: city,
                     buildings: gameState.buildings,
-                    totalPoints: gameState.totalPoints,
+                    coins: gameState.coins,
                     playerLevel: gameState.currentLevel.level,
                     onTap: { building in
                         DispatchQueue.main.async {
@@ -25,7 +25,6 @@ struct GameView: View {
             }
 
             HUDView()
-                .ignoresSafeArea(edges: .top)
 
             if let building = gameState.selectedBuilding {
                 VStack {

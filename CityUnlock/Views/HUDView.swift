@@ -8,18 +8,33 @@ struct HUDView: View {
             // Top bar
             HStack(spacing: 10) {
 
-                // Points
-                HStack(spacing: 5) {
-                    Image(systemName: "star.fill")
-                        .foregroundColor(.yellow)
-                        .font(.system(size: 13))
-                    Text("\(gameState.totalPoints) оч.")
-                        .font(.system(size: 13, weight: .semibold))
+                VStack(spacing: 4) {
+                    // Coins
+                    HStack(spacing: 4) {
+                        Text("💰")
+                            .font(.system(size: 13))
+                        Text("\(gameState.coins)")
+                            .font(.system(size: 13, weight: .bold))
+                        if gameState.totalIncomePerHour > 0 {
+                            Text("+\(gameState.totalIncomePerHour)/ч")
+                                .font(.system(size: 10))
+                                .foregroundColor(.green)
+                        }
+                    }
+                    // XP
+                    HStack(spacing: 4) {
+                        Image(systemName: "star.fill")
+                            .foregroundColor(.yellow)
+                            .font(.system(size: 10))
+                        Text("\(gameState.totalPoints) XP")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(.secondary)
+                    }
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 7)
                 .background(.ultraThinMaterial)
-                .cornerRadius(20)
+                .cornerRadius(14)
 
                 Spacer()
 
